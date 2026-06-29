@@ -1,0 +1,80 @@
+{
+	"name": "lifeos1",
+	"compatibility_date": "2024-12-18",
+	"main": "worker/index.js",
+	"routes": [
+		{
+			"pattern": "*.snapchat.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.ww2.managemydirectory.com/admin/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.pintrest.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.linkedin.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.tiktok.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.instagram.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.x.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.ceogps.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.youtube.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "*.facebook.com/*",
+			"zone_name": "ceogps.com"
+		},
+		{
+			"pattern": "oauth.ceogps.com",
+			"zone_name": "ceogps.com",
+			"custom_domain": true,
+			"enabled": true,
+			"previews_enabled": false
+		}
+	],
+	"vars": {
+		"ENVIRONMENT": "production"
+	},
+	"kv_namespaces": [
+		{
+			"id": "c7e7fb2195cc4397af43f41a06be7efb",
+			"binding": "LIFEOS_KV"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "lifeos_uploads",
+			"bucket_name": "lifeos-uploads"
+		}
+	],
+	"ai": {
+		"binding": "AI"
+	},
+	"observability": {
+		"enabled": true,
+		"logs": {
+			"enabled": true
+		}
+	},
+	"workers_dev": true,
+	"preview_urls": true
+}
