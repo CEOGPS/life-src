@@ -1,0 +1,118 @@
+Core UI Structure (Copy-Paste Ready)
+1. Sidebar Navigation Addition (add to your existing nav):
+HTML<li onclick="showModule('messages')">
+  <span>💬</span> Messages
+</li>
+2. Main Messages Module (place in your dashboard.html or a separate messages.html loaded dynamically):
+HTML<div id="messages-module" class="module hidden">
+  <div class="messages-container" style="display: flex; height: 100vh; max-height: 90vh;">
+    
+    <!-- Left Sidebar: Contacts / Inbox -->
+    <div style="width: 320px; border-right: 1px solid #333; background: #1a1a1a; overflow-y: auto;">
+      <div style="padding: 16px;">
+        <input type="text" id="global-search" placeholder="Search all chats..." 
+               style="width:100%; padding:10px; background:#2a2a2a; border:none; border-radius:8px; color:white;">
+      </div>
+      
+      <div style="padding:0 16px; margin-bottom:12px;">
+        <button onclick="filterTab('all')" class="tab-btn active">All</button>
+        <button onclick="filterTab('personal')" class="tab-btn">Personal</button>
+        <button onclick="filterTab('business')" class="tab-btn">Business</button>
+      </div>
+      
+      <div id="contact-list"></div>
+    </div>
+    
+    <!-- Main Chat Area -->
+    <div style="flex:1; display:flex; flex-direction:column; background:#121212;">
+      <div id="chat-header" style="padding:16px; border-bottom:1px solid #333; display:flex; align-items:center; gap:12px;">
+        <!-- Dynamic: Avatar, Name, Channel badges -->
+      </div>
+      
+      <div id="chat-window" style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:12px;">
+        <!-- Messages appear here -->
+      </div>
+      
+      <!-- Input Bar -->
+      <div style="padding:12px; border-top:1px solid #333; background:#1a1a1a;">
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <button onclick="switchChannel(this)">SMS</button>
+          <button onclick="switchChannel(this)">WhatsApp</button>
+          <button onclick="switchChannel(this)">Telegram</button>
+          <!-- Add more: Signal, IG, Email, Call -->
+        </div>
+        <div style="display:flex;">
+          <input type="text" id="message-input" placeholder="Type message..." 
+                 style="flex:1; padding:12px; background:#2a2a2a; border:none; border-radius:9999px; color:white;">
+          <button onclick="sendMessage()" style="margin-left:8px; padding:0 24px; background:#007aff;">Send</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Panel: Contact Info + CRM -->
+    <div style="width: 280px; border-left:1px solid #333; background:#1a1a1a; padding:16px; overflow-y:auto;">
+      <h3 id="side-name"></h3>
+      <p id="side-source"></p>
+      <!-- CRM fields, notes, history, quick actions (call, email, etc.) -->
+    </div>
+  </div>
+</div>
+
+Styling (Dark, Clean, LifeOS1-friendly)
+Use Tailwind if you already have it, or add this minimal CSS:
+CSS.module { display: none; }
+.module.active { display: block; }
+.tab-btn { padding: 6px 16px; border-radius: 9999px; margin-right: 8px; background: #2a2a2a; }
+.tab-btn.active { background: #007aff; color: white; }
+.chat-bubble { max-width: 70%; padding: 12px 16px; border-radius: 18px; }
+.sent { align-self: flex-end; background: #007aff; color: white; }
+.received { align-self: flex-start; background: #2a2a2a; }
+JavaScript Core (Key Functions)
+JavaScriptlet currentContact = null;
+let contacts = []; // Load from personal + CRM
+
+// Example data structure
+function loadContacts() {
+  // Merge personal (from browser contacts API or your storage) + CRM
+  contacts = [
+    // { id, name, type: 'personal'|'business', channels: ['whatsapp','sms'], lastMsg: '...', avatar: '' }
+  ];
+  renderContactList();
+}
+
+function renderContactList(filter = 'all') {
+  const list = document.getElementById('contact-list');
+  list.innerHTML = '';
+  contacts.filter(c => filter === 'all' || c.type === filter).forEach(contact => {
+    const div = document.createElement('div');
+    div.className = 'contact-item';
+    div.innerHTML = `
+      <div style="display:flex; align-items:center; padding:12px; cursor:pointer;" onclick="openChat(${contact.id})">
+        <img src="${contact.avatar || 'default.png'}" style="width:40px; height:40px; border-radius:50%; margin-right:12px;">
+        <div>
+          <div>${contact.name}</div>
+          <small style="color:#888;">${contact.lastMsg || ''}</small>
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function openChat(id) {
+  currentContact = contacts.find(c => c.id === id);
+  // Populate header, chat window, side panel
+  document.getElementById('chat-header').innerHTML = `
+    <img src="${currentContact.avatar}" style="width:40px;height:40px;border-radius:50%;">
+    <div>
+      <strong>${currentContact.name}</strong>
+      <div style="font-size:0.8em; color:#0a0;">${currentContact.channels.join(' • ')}</div>
+    </div>
+  `;
+  // Load message history for this contact (local or API)
+}
+
+// Channel switching, sending logic, etc.
+function switchChannel(btn) {
+  // Highlight active channel and set reply protocol
+}

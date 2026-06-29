@@ -1,0 +1,562 @@
+/* ── CSS Design Tokens — Crimson-Metallic (Command) ──────────────────
+   Token names are kept stable so existing var(--bg1)/var(--teal) usage
+   keeps working; values re-point to the dark crimson-metallic theme.
+   theme.js may override these at runtime (Appearance switcher). */
+:root {
+  /* Crimson-Metallic Palette - HSL format for Tailwind */
+  --background: 0 0% 0%;           /* #000000 */
+  --foreground: 0 0% 94%;          /* #f0f0f0 */
+  
+  --primary: 355 100% 50%;         /* #ff000d */
+  --primary-foreground: 0 0% 100%;
+  --primary-dark: 0 100% 25%;      /* #800000 */
+  --primary-darker: 0 67% 18%;     /* #4b0f0f */
+  
+  --card: 0 0% 8%;                 /* #141414 */
+  --card-foreground: 0 0% 94%;
+  
+  --muted: 0 0% 30%;               /* #4d4d4d */
+  --muted-foreground: 0 0% 70%;    /* #7c7c7c */
+  
+  --border: 0 0% 20%;
+  --input: 0 0% 15%;
+  
+  /* Cyberpunk accents */
+  --accent-glow: 355 100% 60%;
+  --metallic-highlight: 0 0% 85%;
+  
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Page surface — transparent so the canvas provides the black background and dotted grid texture (with red hover) in the workspace. The glass effect on modules is restored to previous levels. */
+.lo-page {
+  background-color: #000000; /* or `transparent` if canvas provides background */
+  background-image: none;
+}
+
+/* Liquid Glass effect - frosted glass on black bg + grid (distortion filter removed to prevent warping; bevel kept) */
+.liquid-glass {
+    position: relative;
+    background:linear-gradient(to bottom, #141414, #4d4d4d, #a9a9a9, #4d4d4d, #141414);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: .5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px; /* keep previous bevel radius */
+    border-left: .8px solid #a9a9a9;
+    border-top: .8px solid #a9a9a9;
+    box-shadow: 
+      0 10px 32px 0 rgba(31, 38, 135, 0.37),
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      inset 0 -1px 0 rgba(0,0,0,0.4),
+      0 8px 24px rgba(0,0,0,0.5); /* keep bevel */
+    /* No heavy distortion filter - was causing warp */
+}
+
+/* Beveled gunmetal module surface (updated to match liquid-glass specs for consistency) */
+.lo-panel {
+  background: rgba(29, 29, 30, 0.55);
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: .5px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid #ffffff;
+  border-top: 1px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 #ffffff,
+    0 8px 24px #ffffff;
+}
+
+/* Global Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #000000;
+  color: #f0ede8;
+  height: 100vh;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #800000;
+  border-radius: 2px;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 2;
+    box-shadow: 0 0 8px #00c896;
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 16px #00c896, 0 0 32px rgba(0, 200, 150, 0.4);
+  }
+}
+
+@keyframes agentPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(74, 179, 244, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(74, 179, 244, 0.9);
+  }
+}
+
+@keyframes agentFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes dotBlink {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Layout Classes */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background-color: #000000;
+  overflow: hidden;
+}
+
+/* Sidebar - Restyled for Crimson-Metallic Command Theme */
+.sidebar {
+  width: 196px;
+  flex-shrink: 0;
+  /* Top to bottom linear gradient: pure black to dark gray */
+  background: linear-gradient(to bottom, #000000, #141414);
+  border-right: 1px solid rgba(10, 2, 2, 0);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidebar-header {
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(255, 0, 13, 0.06);
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  /* Updated to Crimson core gradient */
+  background: linear-gradient(135deg, #ff000d, #8c1020);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(255, 0, 13, 0.4), 0 0 32px rgba(255, 0, 13, 0.15);
+}
+
+.logo-text {
+  font-size: 13px;
+  font-weight: 800;
+  color: #f0ede8;
+  letter-spacing: 0.02em;
+}
+
+.logo-sub {
+  font-size: 9px;
+  color: #ff000d; /* Crimson string accent */
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+
+.nav-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 8px 8px;
+}
+
+.nav-group {
+  margin-bottom: 4px;
+}
+
+.nav-group-label {
+  font-size: 9px;
+  color: #ff000d; /* Menu titles are Red */
+  padding: 10px 6px 5px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-left: 2px solid transparent;
+  background: transparent; /* No border, transparent background */
+  color: #a9a9a9; /* Text color #a9a9a9 */
+  font-weight: 400;
+  position: relative;
+  transition: all 0.18s ease;
+}
+
+/* Crimson pulsing hover state */
+.nav-btn:hover {
+  background: rgba(255, 0, 13, 0.06) !important;
+  color: #ff000d !important;
+  animation: pulse 1.5s infinite;
+}
+
+.nav-btn.active {
+  background: rgba(255, 0, 13, 0.1) !important;
+  color: #ff000d !important;
+  box-shadow: inset 0 0 20px rgba(255, 0, 13, 0.05), 0 0 12px rgba(255, 0, 13, 0.08);
+  border-left: 2px solid #ff000d;
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 13px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.nav-icon-glow {
+  filter: drop-shadow(0 0 6px rgba(255, 0, 13, 0.8));
+}
+
+.nav-label {
+  flex: 1;
+}
+
+.nav-label-glow {
+  text-shadow: 0 0 12px rgba(255, 0, 13, 0.8), 0 0 24px rgba(255, 0, 13, 0.4);
+}
+
+.nav-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  background: #ff000d;
+  color: #ffffff;
+  line-height: 14px;
+  box-shadow: 0 0 8px rgba(255, 0, 13, 0.6);
+}
+
+.nav-active-dot {
+  position: absolute;
+  right: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ff000d;
+  box-shadow: 0 0 8px #ff000d, 0 0 16px rgba(255, 0, 13, 0.6);
+}
+
+.sidebar-footer {
+  padding: 8px;
+  border-top: 1px solid rgba(255, 0, 13, 0.06);
+}
+
+.agent-zero-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 0, 13, 0.05);
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.agent-zero-btn.active {
+  background: rgba(0, 200, 150, 0.12);
+  border-left: 2px solid #00c896;
+}
+
+.agent-zero-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c80000, #420000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #000000;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(0, 200, 150, 0.5);
+}
+
+.agent-zero-label {
+  font-size: 12px;
+  font-weight: 600;
+  flex: 1;
+  text-align: left;
+  color: #470006;
+}
+
+.agent-zero-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00c896;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px #00c896, 0 0 16px rgba(0, 200, 150, 0.5);
+  animation: pulse 2s infinite;
+}
+
+.settings-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #3a5a6a;
+}
+
+.settings-btn.active {
+  color: #00e6b0;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  padding: 0 20px;
+  height: 52px;
+  border-bottom: 1px solid rgba(0, 200, 150, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #080808;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f0ede8;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.integrations-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(0, 200, 150, 0.08);
+  border: 1px solid rgba(0, 200, 150, 0.3);
+  color: #00c896;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 200, 150, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.agent-zero-header-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(74, 179, 244, 0.08);
+  border: 1px solid rgba(74, 179, 244, 0.3);
+  color: #4ab3f4;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(74, 179, 244, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.settings-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6aaedd;
+}
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 10px 4px 4px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ab3f4, #ff8c42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #000000;
+  overflow: hidden;
+  border: 1.5px solid rgba(0, 200, 150, 0.4);
+  box-shadow: 0 0 8px rgba(0, 200, 150, 0.2);
+}
+
+.profile-name { 
+  font-size: 12px; 
+  font-weight: 600; 
+  color: #f0ede8; 
+} 
+
+.profile-dropdown { 
+  position: absolute; 
+  top: 42px; 
+  right: 0; 
+  width: 186px; 
+  background: #111111; 
+  /* Swapped to crimson boundary tracking tint */
+  border: 1px solid rgba(255, 0, 13, 0.15); 
+  border-radius: 10px; 
+  z-index: 9999; 
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 0, 13, 0.05); 
+  overflow: hidden; 
+} 
+
+.dropdown-header { 
+  padding: 10px 14px; 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06); 
+} 
+
+.dropdown-name { 
+  font-size: 12px; 
+  font-weight: 600; 
+  color: #f0ede8; 
+} 
+
+.dropdown-badge { 
+  font-size: 10px; 
+  color: #ff000d; /* Updated badge identifier to Crimson */
+} 
+
+.dropdown-item { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  width: 100%; 
+  padding: 9px 14px; 
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  text-align: left; 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04); 
+  transition: background 0.12s; 
+} 
+
+/* Crimson item focus highlight overlay */
+.dropdown-item:hover { 
+  background: rgba(255, 0, 13, 0.06); 
+  color: #ff000d;
+} 
+
+.dropdown-icon { 
+  font-size: 13px; 
+} 
+
+.dropdown-label { 
+  font-size: 12px; 
+  color: #c8c8d0; 
+} 
+
+/* Content Area */ 
+.content-area { 
+  flex: 1; 
+  overflow-y: auto; 
+} 
+
+/* Utility Classes */ 
+.sr-only { 
+  position: absolute; 
+  width: 1px; 
+  height: 1px; 
+  padding: 0; 
+  margin: -1px; 
+  overflow: hidden; 
+  clip: rect(0, 0, 0, 0); 
+  white-space: nowrap; 
+  border-width: 0; 
+}
